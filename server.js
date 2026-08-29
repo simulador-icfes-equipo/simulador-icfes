@@ -1,27 +1,77 @@
-require("dotenv").config()
-const express = require("express")
-const cors = require("cors")
-const path = require("path")
+require("dotenv").config();
 
-const BaseDatos = require("./src/db/BaseDatos")
+const express = require("express");
+const cors = require("cors");
+const path = require("path");
 
-const rutasPreguntas = require("./src/routes/preguntas")
-const rutasUsuarios = require("./src/routes/usuarios")
-const rutasIntentos = require("./src/routes/intentos")
-const rutasImagenes = require("./src/routes/imagenes")
+const BaseDatos = require("./src/db/BaseDatos");
 
-const app = express()
-const db = new BaseDatos()
+const rutasPreguntas = require("./src/routes/preguntas");
+const rutasContextos = require("./src/routes/contextos");
 
-app.use(cors())
-app.use(express.json())
-app.use(express.static(path.join(__dirname, "public")))
+const rutasUsuarios = require("./src/routes/usuarios");
+const rutasIntentos = require("./src/routes/intentos");
 
-app.use("/api/preguntas", rutasPreguntas(db))
-app.use("/api", rutasUsuarios(db))
-app.use("/api", rutasIntentos(db))
-app.use("/api", rutasImagenes())
+const app = express();
+
+const db = new BaseDatos();
+
+app.use(cors());
+
+app.use(express.json());
+
+app.use(
+express.static(
+path.join(__dirname, "public")
+)
+);
+
+// =========================
+// RUTAS DE PREGUNTAS
+// =========================
+
+app.use(
+"/api/preguntas",
+rutasPreguntas(db)
+);
+
+// =========================
+// RUTAS DE CONTEXTOS
+// =========================
+
+app.use(
+"/api/contextos",
+rutasContextos(db)
+);
+
+// =========================
+// RUTAS DE USUARIOS
+// =========================
+
+app.use(
+"/api",
+rutasUsuarios(db)
+);
+
+// =========================
+// RUTAS DE INTENTOS
+// =========================
+
+app.use(
+"/api",
+rutasIntentos(db)
+);
+
+// =========================
+// INICIAR SERVIDOR
+// =========================
 
 app.listen(3000, () => {
-    console.log("🚀 Servidor corriendo en http://localhost:3000")
-})
+
+```
+console.log(
+    "🚀 Servidor corriendo en http://localhost:3000"
+);
+```
+
+});

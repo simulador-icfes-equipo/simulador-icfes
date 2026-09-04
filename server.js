@@ -9,6 +9,7 @@ const rutasPreguntas = require("./src/routes/preguntas")
 const rutasUsuarios = require("./src/routes/usuarios")
 const rutasIntentos = require("./src/routes/intentos")
 const rutasImagenes = require("./src/routes/imagenes")
+const rutasAreas = require("./src/routes/areas");
 
 const app = express()
 const db = new BaseDatos()
@@ -21,6 +22,7 @@ app.use("/api/preguntas", rutasPreguntas(db))
 app.use("/api", rutasUsuarios(db))
 app.use("/api", rutasIntentos(db))
 app.use("/api", rutasImagenes())
+app.use("/api/areas", rutasAreas);
 
 app.listen(3000, () => {
     console.log("🚀 Servidor corriendo en http://localhost:3000")

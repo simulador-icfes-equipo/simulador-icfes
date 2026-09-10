@@ -1,17 +1,23 @@
 const express = require("express");
+
+const UsuarioRepository = require("../repositories/UsuarioRepository");
+const UsuarioService = require("../services/UsuarioService");
 const UsuarioController = require("../controllers/UsuarioController");
 
-const router = express.Router();
-const controller = new UsuarioController();
+module.exports = (db) => {
 
-router.get("/", controller.obtenerTodos);
+    const router = express.Router();
 
-router.get("/:id", controller.obtenerPorId);
+    const usuarioRepository = new UsuarioRepository(db);
+    const usuarioService = new UsuarioService(usuarioRepository);
+    const usuarioController = new UsuarioController(usuarioService);
 
-router.post("/", controller.crear);
+    router.get("/usuarios", usuarioController.obtenerTodos);
+    router.get("/usuarios/:id", usuarioController.obtenerPorId);
+    router.post("/usuarios", usuarioController.crear);
+    router.put("/usuarios/:id", usuarioController.actualizar);
+    router.delete("/usuarios/:id", usuarioController.eliminar);
 
-router.put("/:id", controller.actualizar);
+    return router;
 
-router.delete("/:id", controller.eliminar);
-
-module.exports = router;
+};

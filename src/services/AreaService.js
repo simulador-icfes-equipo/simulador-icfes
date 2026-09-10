@@ -1,33 +1,15 @@
-const BaseDatos = require("../db/BaseDatos");
-
-const db = new BaseDatos();
-
 class AreaService {
 
-    async obtenerTodas() {
-        const sql = `
-            SELECT id_area, nombre_area, descripcion
-            FROM areas
-            ORDER BY id_area
-        `;
+    constructor(areaRepository) {
+        this.areaRepository = areaRepository;
+    }
 
-        return await db.ejecutar(sql);
+    async obtenerTodas() {
+        return await this.areaRepository.obtenerTodas();
     }
 
     async obtenerPorId(id_area) {
-        const sql = `
-            SELECT id_area, nombre_area, descripcion
-            FROM areas
-            WHERE id_area = ?
-        `;
-
-        const resultados = await db.ejecutar(sql, [id_area]);
-
-        if (resultados.length === 0) {
-            return null;
-        }
-
-        return resultados[0];
+        return await this.areaRepository.obtenerPorId(id_area);
     }
 
     async crear(area) {
@@ -35,11 +17,7 @@ class AreaService {
             throw new Error("Los datos del área son obligatorios.");
         }
 
-        const { id_area, nombre_area, descripcion } = area;
-
-        if (id_area === undefined || id_area === null) {
-            throw new Error("El id_area es obligatorio.");
-        }
+        const { nombre_area, descripcion } = area;
 
         if (!nombre_area || nombre_area.trim() === "") {
             throw new Error("El nombre del área es obligatorio.");
@@ -51,18 +29,16 @@ class AreaService {
             );
         }
 
-        const sql = `
-            INSERT INTO areas (id_area, nombre_area, descripcion)
-            VALUES (?, ?, ?)
-        `;
+        const existente = await this.areaRepository.obtenerPorNombre(nombre_area.trim());
 
-        await db.ejecutar(sql, [
-            id_area,
-            nombre_area.trim(),
-            descripcion || null
-        ]);
+        if (existente) {
+            throw new Error("Ya existe un área con ese nombre.");
+        }
 
-        return await this.obtenerPorId(id_area);
+        return await this.areaRepository.crear({
+            nombre_area: nombre_area.trim(),
+            descripcion: descripcion || null
+        });
     }
 
     async actualizar(id_area, area) {
@@ -82,35 +58,16 @@ class AreaService {
             );
         }
 
-        const sql = `
-            UPDATE areas
-            SET nombre_area = ?, descripcion = ?
-            WHERE id_area = ?
-        `;
-
-        const resultado = await db.ejecutar(sql, [
-            nombre_area.trim(),
-            descripcion || null,
-            id_area
-        ]);
-
-        if (resultado.affectedRows === 0) {
-            return null;
-        }
-
-        return await this.obtenerPorId(id_area);
+        return await this.areaRepository.actualizar(id_area, {
+            nombre_area: nombre_area.trim(),
+            descripcion: descripcion || null
+        });
     }
 
     async eliminar(id_area) {
-        const sql = `
-            DELETE FROM areas
-            WHERE id_area = ?
-        `;
-
-        const resultado = await db.ejecutar(sql, [id_area]);
-
-        return resultado.affectedRows > 0;
+        return await this.areaRepository.eliminar(id_area);
     }
+
 }
 
 module.exports = AreaService;

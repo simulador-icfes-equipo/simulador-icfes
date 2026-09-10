@@ -1,12 +1,12 @@
-const AreaService = require("../services/AreaService");
-
-const areaService = new AreaService();
-
 class AreaController {
 
-    async obtenerTodas(req, res) {
+    constructor(areaService) {
+        this.areaService = areaService;
+    }
+
+    obtenerTodas = async (req, res) => {
         try {
-            const areas = await areaService.obtenerTodas();
+            const areas = await this.areaService.obtenerTodas();
 
             return res.status(200).json({
                 success: true,
@@ -21,9 +21,9 @@ class AreaController {
                 message: "Error interno del servidor."
             });
         }
-    }
+    };
 
-    async obtenerPorId(req, res) {
+    obtenerPorId = async (req, res) => {
         try {
             const { id } = req.params;
 
@@ -34,7 +34,7 @@ class AreaController {
                 });
             }
 
-            const area = await areaService.obtenerPorId(Number(id));
+            const area = await this.areaService.obtenerPorId(Number(id));
 
             if (!area) {
                 return res.status(404).json({
@@ -56,36 +56,20 @@ class AreaController {
                 message: "Error interno del servidor."
             });
         }
-    }
+    };
 
-    async crear(req, res) {
+    crear = async (req, res) => {
         try {
-            const { id_area, nombre_area, descripcion } = req.body;
+            const { nombre_area, descripcion } = req.body;
 
-            if (
-                id_area === undefined ||
-                id_area === null ||
-                !nombre_area
-            ) {
+            if (!nombre_area) {
                 return res.status(400).json({
                     success: false,
-                    message: "id_area y nombre_area son obligatorios."
+                    message: "nombre_area es obligatorio."
                 });
             }
 
-            const areaExistente = await areaService.obtenerPorId(
-                Number(id_area)
-            );
-
-            if (areaExistente) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Ya existe un área con ese id_area."
-                });
-            }
-
-            const nuevaArea = await areaService.crear({
-                id_area: Number(id_area),
+            const nuevaArea = await this.areaService.crear({
                 nombre_area,
                 descripcion
             });
@@ -99,14 +83,14 @@ class AreaController {
         } catch (error) {
             console.error("Error al crear el área:", error);
 
-            return res.status(500).json({
+            return res.status(400).json({
                 success: false,
-                message: "Error interno del servidor."
+                message: error.message
             });
         }
-    }
+    };
 
-    async actualizar(req, res) {
+    actualizar = async (req, res) => {
         try {
             const { id } = req.params;
             const { nombre_area, descripcion } = req.body;
@@ -118,16 +102,7 @@ class AreaController {
                 });
             }
 
-            if (!nombre_area) {
-                return res.status(400).json({
-                    success: false,
-                    message: "El nombre_area es obligatorio."
-                });
-            }
-
-            const areaExistente = await areaService.obtenerPorId(
-                Number(id)
-            );
+            const areaExistente = await this.areaService.obtenerPorId(Number(id));
 
             if (!areaExistente) {
                 return res.status(404).json({
@@ -136,13 +111,10 @@ class AreaController {
                 });
             }
 
-            const areaActualizada = await areaService.actualizar(
-                Number(id),
-                {
-                    nombre_area,
-                    descripcion
-                }
-            );
+            const areaActualizada = await this.areaService.actualizar(Number(id), {
+                nombre_area,
+                descripcion
+            });
 
             return res.status(200).json({
                 success: true,
@@ -153,14 +125,14 @@ class AreaController {
         } catch (error) {
             console.error("Error al actualizar el área:", error);
 
-            return res.status(500).json({
+            return res.status(400).json({
                 success: false,
-                message: "Error interno del servidor."
+                message: error.message
             });
         }
-    }
+    };
 
-    async eliminar(req, res) {
+    eliminar = async (req, res) => {
         try {
             const { id } = req.params;
 
@@ -171,7 +143,7 @@ class AreaController {
                 });
             }
 
-            const eliminado = await areaService.eliminar(Number(id));
+            const eliminado = await this.areaService.eliminar(Number(id));
 
             if (!eliminado) {
                 return res.status(404).json({
@@ -193,7 +165,8 @@ class AreaController {
                 message: "Error interno del servidor."
             });
         }
-    }
+    };
+
 }
 
-module.exports = new AreaController();
+module.exports = AreaController;

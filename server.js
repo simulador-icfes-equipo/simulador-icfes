@@ -78,7 +78,7 @@ app.use(
 
 app.use(
     "/api/areas",
-    rutasAreas
+    rutasAreas(db)
 );
 
 // =========================

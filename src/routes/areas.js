@@ -1,12 +1,23 @@
 const express = require("express");
+
+const AreaRepository = require("../repositories/AreaRepository");
+const AreaService = require("../services/AreaService");
 const AreaController = require("../controllers/AreaController");
 
-const router = express.Router();
+module.exports = (db) => {
 
-router.get("/", AreaController.obtenerTodas);
-router.get("/:id", AreaController.obtenerPorId);
-router.post("/", AreaController.crear);
-router.put("/:id", AreaController.actualizar);
-router.delete("/:id", AreaController.eliminar);
+    const router = express.Router();
 
-module.exports = router;
+    const areaRepository = new AreaRepository(db);
+    const areaService = new AreaService(areaRepository);
+    const areaController = new AreaController(areaService);
+
+    router.get("/", areaController.obtenerTodas);
+    router.get("/:id", areaController.obtenerPorId);
+    router.post("/", areaController.crear);
+    router.put("/:id", areaController.actualizar);
+    router.delete("/:id", areaController.eliminar);
+
+    return router;
+
+};

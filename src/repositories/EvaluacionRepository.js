@@ -4,6 +4,10 @@ class EvaluacionRepository {
         this.db = db;
     }
 
+    // ============================
+    // EVALUACION
+    // ============================
+
     async crear(evaluacion) {
         const sql = `
             INSERT INTO evaluacion (id_usuario, id_area, total_preguntas)
@@ -62,12 +66,18 @@ class EvaluacionRepository {
         return await this.obtenerPorId(id_evaluacion);
     }
 
-    // ---- detalle_evaluacion ----
+    // ============================
+    // DETALLE_EVALUACION
+    // ============================
 
     async registrarRespuesta(detalle) {
         const sql = `
             INSERT INTO detalle_evaluacion (
-                id_pregunta, id_evaluacion, tiempo_usado, respuesta_marcada, es_correcta
+                id_pregunta,
+                id_evaluacion,
+                tiempo_usado,
+                respuesta_marcada,
+                es_correcta
             )
             VALUES (?, ?, ?, ?, ?)
         `;
@@ -97,7 +107,8 @@ class EvaluacionRepository {
                 p.enunciado,
                 p.respuesta_correcta
             FROM detalle_evaluacion d
-            INNER JOIN preguntas p ON d.id_pregunta = p.id_pregunta
+            INNER JOIN preguntas p
+                ON d.id_pregunta = p.id_pregunta
             WHERE d.id_evaluacion = ?
         `;
 
@@ -120,7 +131,8 @@ class EvaluacionRepository {
         const sql = `
             SELECT COUNT(*) AS total_correctas
             FROM detalle_evaluacion
-            WHERE id_evaluacion = ? AND es_correcta = 1
+            WHERE id_evaluacion = ?
+              AND es_correcta = 1
         `;
 
         const resultados = await this.db.ejecutar(sql, [id_evaluacion]);
@@ -132,15 +144,21 @@ class EvaluacionRepository {
         const sql = `
             SELECT id_detalle
             FROM detalle_evaluacion
-            WHERE id_evaluacion = ? AND id_pregunta = ?
+            WHERE id_evaluacion = ?
+              AND id_pregunta = ?
         `;
 
-        const resultados = await this.db.ejecutar(sql, [id_evaluacion, id_pregunta]);
+        const resultados = await this.db.ejecutar(sql, [
+            id_evaluacion,
+            id_pregunta
+        ]);
 
         return resultados.length > 0;
     }
 
-    // ---- apoyo: validar respuesta correcta contra preguntas ----
+    // ============================
+    // PREGUNTAS
+    // ============================
 
     async obtenerRespuestaCorrecta(id_pregunta) {
         const sql = `
@@ -154,6 +172,30 @@ class EvaluacionRepository {
         return resultados.length > 0
             ? resultados[0].respuesta_correcta
             : null;
+    }
+
+    // ============================
+    // RANKING
+    // ============================
+
+    async obtenerRankingPorArea(id_area) {
+        const sql = `
+            SELECT
+                id_ranking,
+                id_usuario,
+                nombre_usuario,
+                id_area,
+                nombre_area,
+                mejor_puntaje,
+                total_intentos,
+                ultima_actuacion
+            FROM vista_ranking_general
+            WHERE id_area = ?
+            ORDER BY mejor_puntaje DESC, total_intentos ASC
+            LIMIT 10
+        `;
+
+        return await this.db.ejecutar(sql, [id_area]);
     }
 
 }

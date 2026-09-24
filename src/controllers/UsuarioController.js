@@ -1,18 +1,36 @@
-const UsuarioService = require("../services/UsuarioService");
-
 class UsuarioController {
 
-    constructor() {
-        this.service = new UsuarioService();
+    login = async (req, res) => {
+    try {
+        const { correo, password } = req.body;
+
+        const usuario = await this.usuarioService.login(
+            correo,
+            password
+        );
+
+        res.status(200).json({
+            mensaje: "Login exitoso",
+            usuario
+        });
+    } catch (error) {
+        console.error("Error en el login:", error);
+
+        res.status(401).json({
+            mensaje: error.message
+        });
+    }
+};
+    constructor(usuarioService) {
+        this.usuarioService = usuarioService;
     }
 
     obtenerTodos = async (req, res) => {
         try {
-            const usuarios = await this.service.obtenerTodos();
-
+            const usuarios = await this.usuarioService.obtenerTodos();
             res.status(200).json(usuarios);
-
         } catch (error) {
+            console.error("Error al obtener los usuarios:", error);
             res.status(500).json({
                 mensaje: "Error al obtener los usuarios",
                 error: error.message
@@ -22,9 +40,7 @@ class UsuarioController {
 
     obtenerPorId = async (req, res) => {
         try {
-            const usuario = await this.service.obtenerPorId(
-                req.params.id
-            );
+            const usuario = await this.usuarioService.obtenerPorId(req.params.id);
 
             if (!usuario) {
                 return res.status(404).json({
@@ -33,67 +49,72 @@ class UsuarioController {
             }
 
             res.status(200).json(usuario);
-
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al obtener el usuario",
-                error: error.message
+            console.error("Error al obtener el usuario:", error);
+            res.status(400).json({
+                mensaje: error.message
             });
         }
     };
 
     crear = async (req, res) => {
         try {
-            const usuario = await this.service.crear(req.body);
+            const usuario = await this.usuarioService.crear(req.body);
 
             res.status(201).json({
                 mensaje: "Usuario creado correctamente",
                 usuario
             });
-
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al crear el usuario",
-                error: error.message
+            console.error("Error al crear el usuario:", error);
+            res.status(400).json({
+                mensaje: error.message
             });
         }
     };
 
     actualizar = async (req, res) => {
         try {
-            const resultado = await this.service.actualizar(
+            const resultado = await this.usuarioService.actualizar(
                 req.params.id,
                 req.body
             );
 
+            if (!resultado) {
+                return res.status(404).json({
+                    mensaje: "Usuario no encontrado"
+                });
+            }
+
             res.status(200).json({
                 mensaje: "Usuario actualizado correctamente",
-                resultado
+                usuario: resultado
             });
-
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al actualizar el usuario",
-                error: error.message
+            console.error("Error al actualizar el usuario:", error);
+            res.status(400).json({
+                mensaje: error.message
             });
         }
     };
 
     eliminar = async (req, res) => {
         try {
-            const resultado = await this.service.eliminar(
-                req.params.id
-            );
+            const eliminado = await this.usuarioService.eliminar(req.params.id);
+
+            if (!eliminado) {
+                return res.status(404).json({
+                    mensaje: "Usuario no encontrado"
+                });
+            }
 
             res.status(200).json({
-                mensaje: "Usuario eliminado correctamente",
-                resultado
+                mensaje: "Usuario eliminado correctamente"
             });
-
         } catch (error) {
-            res.status(500).json({
-                mensaje: "Error al eliminar el usuario",
-                error: error.message
+            console.error("Error al eliminar el usuario:", error);
+            res.status(400).json({
+                mensaje: error.message
             });
         }
     };

@@ -12,11 +12,53 @@ module.exports = (db) => {
     const evaluacionService = new EvaluacionService(evaluacionRepository);
     const evaluacionController = new EvaluacionController(evaluacionService);
 
-    router.post("/", evaluacionController.iniciar);
-    router.get("/usuario/:idUsuario", evaluacionController.obtenerHistorial);
-    router.get("/:id", evaluacionController.obtenerPorId);
-    router.post("/:id/respuestas", evaluacionController.registrarRespuesta);
-    router.put("/:id/finalizar", evaluacionController.finalizar);
+    // ============================
+    // EVALUACION
+    // ============================
+
+    // Iniciar una evaluación
+    router.post(
+        "/",
+        evaluacionController.iniciar
+    );
+
+    // Historial de evaluaciones de un usuario
+    router.get(
+        "/usuario/:idUsuario",
+        evaluacionController.obtenerHistorial
+    );
+
+    // ============================
+    // RANKING
+    // ============================
+
+    // Top 10 de usuarios por área
+    router.get(
+        "/ranking/area/:idArea",
+        evaluacionController.obtenerRankingPorArea
+    );
+
+    // ============================
+    // EVALUACION POR ID
+    // ============================
+
+    // Obtener evaluación por ID
+    router.get(
+        "/:id",
+        evaluacionController.obtenerPorId
+    );
+
+    // Registrar respuesta
+    router.post(
+        "/:id/respuestas",
+        evaluacionController.registrarRespuesta
+    );
+
+    // Finalizar evaluación
+    router.put(
+        "/:id/finalizar",
+        evaluacionController.finalizar
+    );
 
     return router;
 

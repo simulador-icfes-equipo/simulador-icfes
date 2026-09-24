@@ -1,9 +1,7 @@
-const BaseDatos = require("../db/BaseDatos");
-
 class UsuarioRepository {
 
-    constructor() {
-        this.db = new BaseDatos();
+    constructor(db) {
+        this.db = db;
     }
 
     async obtenerTodos() {
@@ -12,7 +10,6 @@ class UsuarioRepository {
                 id_usuario,
                 nombre,
                 correo,
-                password,
                 fecha_registro,
                 id_rol
             FROM usuarios
@@ -27,7 +24,6 @@ class UsuarioRepository {
                 id_usuario,
                 nombre,
                 correo,
-                password,
                 fecha_registro,
                 id_rol
             FROM usuarios
@@ -36,24 +32,41 @@ class UsuarioRepository {
 
         const resultados = await this.db.ejecutar(sql, [id_usuario]);
 
-        return resultados[0];
+        return resultados.length > 0 ? resultados[0] : null;
+    }
+
+    async obtenerPorCorreo(correo) {
+        const sql = `
+            SELECT *
+            FROM usuarios
+            WHERE correo = ?
+        `;
+
+        const resultados = await this.db.ejecutar(sql, [correo]);
+
+        return resultados.length > 0 ? resultados[0] : null;
     }
 
     async crear(usuario) {
         const sql = `
             INSERT INTO usuarios
-            (id_usuario, nombre, correo, password, fecha_registro, id_rol)
-            VALUES (?, ?, ?, ?, ?, ?)
+            (nombre, correo, password, fecha_registro, id_rol)
+            VALUES (?, ?, ?, NOW(), ?)
         `;
 
-        return await this.db.ejecutar(sql, [
-            usuario.id_usuario,
+        const resultado = await this.db.ejecutar(sql, [
             usuario.nombre,
             usuario.correo,
             usuario.password,
-            usuario.fecha_registro,
             usuario.id_rol
         ]);
+
+       return {
+    id_usuario: resultado.insertId,
+    nombre: usuario.nombre,
+    correo: usuario.correo,
+    id_rol: usuario.id_rol
+};
     }
 
     async actualizar(id_usuario, usuario) {
@@ -61,18 +74,22 @@ class UsuarioRepository {
             UPDATE usuarios
             SET nombre = ?,
                 correo = ?,
-                password = ?,
                 id_rol = ?
             WHERE id_usuario = ?
         `;
 
-        return await this.db.ejecutar(sql, [
+        const resultado = await this.db.ejecutar(sql, [
             usuario.nombre,
             usuario.correo,
-            usuario.password,
             usuario.id_rol,
             id_usuario
         ]);
+
+        if (resultado.affectedRows === 0) {
+            return null;
+        }
+
+        return await this.obtenerPorId(id_usuario);
     }
 
     async eliminar(id_usuario) {
@@ -81,7 +98,9 @@ class UsuarioRepository {
             WHERE id_usuario = ?
         `;
 
-        return await this.db.ejecutar(sql, [id_usuario]);
+        const resultado = await this.db.ejecutar(sql, [id_usuario]);
+
+        return resultado.affectedRows > 0;
     }
 
 }

@@ -13,6 +13,7 @@ module.exports = (db) => {
     const areaController = new AreaController(areaService);
 
     router.get("/", areaController.obtenerTodas);
+    router.get("/estadisticas", areaController.obtenerEstadisticas);
     router.get("/:id", areaController.obtenerPorId);
     router.post("/", areaController.crear);
     router.put("/:id", areaController.actualizar);

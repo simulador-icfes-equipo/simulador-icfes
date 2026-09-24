@@ -84,6 +84,21 @@ class AreaRepository {
         return resultado.affectedRows > 0;
     }
 
+    async obtenerEstadisticas() {
+        const sql = `
+            SELECT
+                id_area,
+                nombre_area,
+                total_preguntas,
+                total_evaluaciones,
+                promedio_puntaje
+            FROM vista_estadisticas_areas
+            ORDER BY id_area
+        `;
+
+        return await this.db.ejecutar(sql);
+    }
+
 }
 
 module.exports = AreaRepository;

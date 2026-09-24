@@ -167,6 +167,25 @@ class AreaController {
         }
     };
 
+    obtenerEstadisticas = async (req, res) => {
+        try {
+            const estadisticas = await this.areaService.obtenerEstadisticas();
+
+            return res.status(200).json({
+                success: true,
+                data: estadisticas
+            });
+
+        } catch (error) {
+            console.error("Error al obtener las estadísticas de áreas:", error);
+
+            return res.status(500).json({
+                success: false,
+                message: "Error interno del servidor."
+            });
+        }
+    };
+
 }
 
 module.exports = AreaController;

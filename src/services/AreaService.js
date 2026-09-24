@@ -29,7 +29,9 @@ class AreaService {
             );
         }
 
-        const existente = await this.areaRepository.obtenerPorNombre(nombre_area.trim());
+        const existente = await this.areaRepository.obtenerPorNombre(
+            nombre_area.trim()
+        );
 
         if (existente) {
             throw new Error("Ya existe un área con ese nombre.");
@@ -66,6 +68,10 @@ class AreaService {
 
     async eliminar(id_area) {
         return await this.areaRepository.eliminar(id_area);
+    }
+
+    async obtenerEstadisticas() {
+        return await this.areaRepository.obtenerEstadisticas();
     }
 
 }

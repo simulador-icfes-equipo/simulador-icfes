@@ -257,7 +257,31 @@ async eliminar(id) {
 
     return resultado.affectedRows > 0;
 }
+async obtenerAleatoriasPorArea(idArea, cantidad) {
 
+    // OJO: a propósito NO incluye respuesta_correcta.
+    // Este método es para que el estudiante reciba
+    // las preguntas del simulacro, no para revelar la respuesta.
+    const sql = `
+        SELECT
+            p.id_pregunta,
+            p.id_area,
+            p.id_contexto,
+            p.enunciado,
+            p.opcion_a,
+            p.opcion_b,
+            p.opcion_c,
+            p.opcion_d,
+            p.nivel_dificultad,
+            p.url_imagen
+        FROM preguntas p
+        WHERE p.id_area = ?
+        ORDER BY RAND()
+        LIMIT ?
+    `;
+
+    return await this.db.ejecutar(sql, [idArea, cantidad]);
+}
 
 }
 

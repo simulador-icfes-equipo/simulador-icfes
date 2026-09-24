@@ -170,7 +170,30 @@ async eliminar(req, res) {
 
     }
 }
+async obtenerSimulacro(req, res) {
+    try {
 
+        const { idArea } = req.params;
+        const { cantidad } = req.query;
+
+        const preguntas =
+            await this.preguntaService.obtenerSimulacro(
+                idArea,
+                cantidad
+            );
+
+        return res.status(200).json(preguntas);
+
+    } catch (error) {
+
+        console.error("Error al armar el simulacro:", error);
+
+        return res.status(400).json({
+            mensaje: error.message
+        });
+
+    }
+}
 
 }
 

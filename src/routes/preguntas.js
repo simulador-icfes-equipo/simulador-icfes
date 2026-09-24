@@ -6,7 +6,6 @@ const PreguntaController = require("../controllers/PreguntaController");
 
 module.exports = (db) => {
 
-
 const router = express.Router();
 
 const preguntaRepository = new PreguntaRepository(db);
@@ -28,7 +27,10 @@ router.get(
     "/area/:idArea",
     preguntaController.obtenerPorArea.bind(preguntaController)
 );
-
+router.get(
+    "/simulacro/area/:idArea",
+    preguntaController.obtenerSimulacro.bind(preguntaController)
+);
 
 router.get(
     "/:id",

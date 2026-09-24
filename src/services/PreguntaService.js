@@ -224,7 +224,24 @@ async eliminar(id) {
 
 }
 
+async obtenerSimulacro(idArea, cantidad) {
 
+    if (!idArea || isNaN(idArea)) {
+        throw new Error("El ID del área no es válido");
+    }
+
+    const total = Number(cantidad) || 10; // 10 por defecto
+
+    if (total <= 0 || total > 100) {
+        throw new Error("La cantidad debe estar entre 1 y 100");
+    }
+
+    return await this.preguntaRepository.obtenerAleatoriasPorArea(
+        idArea,
+        total
+    );
+
+}
 }
 
 module.exports = PreguntaService;

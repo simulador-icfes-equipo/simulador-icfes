@@ -11,7 +11,9 @@ const rutasContextos = require("./src/routes/contextos");
 const rutasUsuarios = require("./src/routes/usuarios");
 const rutasAreas = require("./src/routes/areas");
 const rutasEvaluacion = require("./src/routes/evaluacion");
-
+const rutasImagenes = require("./src/routes/imagenes");
+const rutasExplicaciones = require("./src/routes/explicaciones");
+const rutasRepaso = require("./src/routes/repaso");
 const app = express();
 
 // Instancia única de la base de datos.
@@ -72,11 +74,19 @@ app.use(
     "/api/evaluaciones",
     rutasEvaluacion(db)
 );
+// =========================
+// RUTAS DE IMAGENES
+// =========================
 
+app.use(
+    "/api",
+    rutasImagenes()
+);
 // =========================
 // INICIAR SERVIDOR
 // =========================
-
+app.use("/api/explicaciones", rutasExplicaciones(db));
+app.use("/api/repaso", rutasRepaso(db));
 app.listen(3000, () => {
     console.log(
         "🚀 Servidor corriendo en http://localhost:3000"

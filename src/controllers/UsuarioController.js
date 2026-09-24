@@ -1,5 +1,26 @@
 class UsuarioController {
 
+    login = async (req, res) => {
+    try {
+        const { correo, password } = req.body;
+
+        const usuario = await this.usuarioService.login(
+            correo,
+            password
+        );
+
+        res.status(200).json({
+            mensaje: "Login exitoso",
+            usuario
+        });
+    } catch (error) {
+        console.error("Error en el login:", error);
+
+        res.status(401).json({
+            mensaje: error.message
+        });
+    }
+};
     constructor(usuarioService) {
         this.usuarioService = usuarioService;
     }

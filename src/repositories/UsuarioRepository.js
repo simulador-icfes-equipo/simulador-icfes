@@ -61,10 +61,12 @@ class UsuarioRepository {
             usuario.id_rol
         ]);
 
-        return {
-            id_usuario: resultado.insertId,
-            ...usuario
-        };
+       return {
+    id_usuario: resultado.insertId,
+    nombre: usuario.nombre,
+    correo: usuario.correo,
+    id_rol: usuario.id_rol
+};
     }
 
     async actualizar(id_usuario, usuario) {

@@ -13,6 +13,7 @@ module.exports = (db) => {
     const usuarioController = new UsuarioController(usuarioService);
 
     router.get("/usuarios", usuarioController.obtenerTodos);
+    router.post("/login", usuarioController.login);
     router.get("/usuarios/:id", usuarioController.obtenerPorId);
     router.post("/usuarios", usuarioController.crear);
     router.put("/usuarios/:id", usuarioController.actualizar);

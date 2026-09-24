@@ -1,3 +1,5 @@
+const bcrypt = require("bcryptjs");
+
 class UsuarioService {
 
     constructor(usuarioRepository) {
@@ -7,6 +9,37 @@ class UsuarioService {
     async obtenerTodos() {
         return await this.usuarioRepository.obtenerTodos();
     }
+    
+    async login(correo, password) {
+    if (!correo || correo.trim() === "") {
+        throw new Error("El correo es obligatorio");
+    }
+
+    if (!password || password.trim() === "") {
+        throw new Error("La contraseña es obligatoria");
+    }
+
+    const usuario = await this.usuarioRepository.obtenerPorCorreo(
+        correo.trim()
+    );
+
+    if (!usuario) {
+        throw new Error("Correo o contraseña incorrectos");
+    }
+
+    const passwordCorrecta = await bcrypt.compare(
+        password,
+        usuario.password
+    );
+
+    if (!passwordCorrecta) {
+        throw new Error("Correo o contraseña incorrectos");
+    }
+
+    const { password: _, ...usuarioSinPassword } = usuario;
+
+    return usuarioSinPassword;
+}
 
     async obtenerPorId(id_usuario) {
         if (!id_usuario || isNaN(id_usuario)) {
@@ -41,12 +74,14 @@ class UsuarioService {
             throw new Error("Ya existe un usuario registrado con ese correo");
         }
 
-        return await this.usuarioRepository.crear({
-            nombre: nombre.trim(),
-            correo: correo.trim(),
-            password,
-            id_rol: id_rol || 2 // 2 = estudiante por defecto
-        });
+       const passwordEncriptada = await bcrypt.hash(password, 10);
+
+      return await this.usuarioRepository.crear({
+      nombre: nombre.trim(),
+      correo: correo.trim(),
+      password: passwordEncriptada,
+      id_rol: id_rol || 2
+    });
     }
 
     async actualizar(id_usuario, usuario) {

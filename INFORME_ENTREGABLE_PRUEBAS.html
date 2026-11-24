@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Pruebas Unitarias, Integración y Pipeline CI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            background-color: #f8fafc;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #1e3a8a;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 12px;
+            font-size: 26px;
+            text-align: center;
+        }
+        h2 {
+            color: #1e40af;
+            margin-top: 35px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+            font-size: 20px;
+        }
+        h3 {
+            color: #2563eb;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        p, li {
+            font-size: 14px;
+        }
+        .meta-box {
+            background-color: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .meta-box p {
+            margin: 5px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        table, th, td {
+            border: 1px solid #cbd5e1;
+        }
+        th {
+            background-color: #1e3a8a;
+            color: #ffffff;
+            text-align: left;
+            padding: 10px 12px;
+            width: 28%;
+        }
+        td {
+            padding: 10px 12px;
+            background-color: #ffffff;
+        }
+        pre {
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+        code {
+            font-family: Consolas, Monaco, 'Courier New', Courier, monospace;
+        }
+        .img-placeholder {
+            border: 2px dashed #94a3b8;
+            background-color: #f1f5f9;
+            border-radius: 6px;
+            padding: 30px;
+            text-align: center;
+            color: #64748b;
+            font-style: italic;
+            margin: 15px 0;
+        }
+        .badge {
+            display: inline-block;
+            background-color: #10b981;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        @media print {
+            body {
+                background-color: #ffffff;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Informe Técnico: Desarrollo de Pruebas y Pipeline de CI</h1>
+
+    <div class="meta-box">
+        <p><strong>Estudiante:</strong> Norman</p>
+        <p><strong>Proyecto:</strong> Simulador Saber 11 / ICFES (Backend API Express + Sequelize)</p>
+        <p><strong>Repositorio GitHub:</strong> <a href="https://github.com/simulador-icfes-equipo/simulador-icfes.git" target="_blank">https://github.com/simulador-icfes-equipo/simulador-icfes.git</a></p>
+        <p><strong>Rama de trabajo:</strong> <code>norman-pruebas</code></p>
+        <p><strong>Estado del Pipeline CI:</strong> <span class="badge">PASSED</span> (20/20 Pruebas exitosas)</p>
+    </div>
+
+    <h2>1. Fichas Técnicas de Pruebas Unitarias</h2>
+    <p>Se diseñaron e implementaron 4 pruebas unitarias independientes cubriendo distintas capas de la arquitectura del proyecto bajo estricto aislamiento mediante mocks (Jest):</p>
+
+    <!-- PRUEBA UNITARIA 1 -->
+    <h3>Prueba Unitaria 1: Capa de Controlador (Controller)</h3>
+    <table>
+        <tr>
+            <th>Campo</th>
+            <td><strong>Detalle</strong></td>
+        </tr>
+        <tr>
+            <th>Nombre del Estudiante</th>
+            <td>Norman</td>
+        </tr>
+        <tr>
+            <th>Capa probada</th>
+            <td><strong>Controller</strong> (<code>AreaController.js</code>)</td>
+        </tr>
+        <tr>
+            <th>Elemento a validar</th>
+            <td>Método <code>crear</code>: Valida que ante un payload válido, se invoque al servicio <code>AreaService.crear</code> y se retorne una respuesta HTTP 201 (Created) junto con la estructura JSON estándar de éxito y la entidad creada.</td>
+        </tr>
+        <tr>
+            <th>Datos de entrada (Payload/Mock)</th>
+            <td>
+                <pre><code>// req.body
+{
+  "nombre_area": "Ciencias Naturales",
+  "descripcion": "Área enfocada en biología, química y física"
+}
+
+// Mock AreaService.crear
+{
+  "id_area": 1,
+  "nombre_area": "Ciencias Naturales",
+  "descripcion": "Área enfocada en biología, química y física"
+}</code></pre>
+            </td>
+        </tr>
+        <tr>
+            <th>Resultado esperado</th>
+            <td>
+                Código HTTP <strong>201</strong> y JSON:<br>
+                <pre><code>{
+  "success": true,
+  "message": "Área creada correctamente.",
+  "data": {
+    "id_area": 1,
+    "nombre_area": "Ciencias Naturales",
+    "descripcion": "Área enfocada en biología, química y física"
+  }
+}</code></pre>
+            </td>
+        </tr>
+    </table>
+
+    <!-- PRUEBA UNITARIA 2 -->
+    <h3>Prueba Unitaria 2: Capa de Servicio / Lógica de Negocio (Service)</h3>
+    <table>
+        <tr>
+            <th>Campo</th>
+            <td><strong>Detalle</strong></td>
+        </tr>
+        <tr>
+            <th>Nombre del Estudiante</th>
+            <td>Norman</td>
+        </tr>
+        <tr>
+            <th>Capa probada</th>
+            <td><strong>Service</strong> (<code>AreaService.js</code>)</td>
+        </tr>
+        <tr>
+            <th>Elemento a validar</th>
+            <td>Método <code>crear</code>: Valida la regla de negocio que prohíbe nombres de área duplicados. Si <code>areaRepository.obtenerPorNombre</code> encuentra un registro existente, se debe lanzar una excepción inmediata con el mensaje respectivo sin delegar la inserción al repositorio.</td>
+        </tr>
+        <tr>
+            <th>Datos de entrada (Payload/Mock)</th>
+            <td>
+                <pre><code>// Parámetro área
+{
+  "nombre_area": "Matemáticas",
+  "descripcion": "Preguntas cuantitativas"
+}
+
+// Mock AreaRepository.obtenerPorNombre("Matemáticas")
+{
+  "id_area": 1,
+  "nombre_area": "Matemáticas"
+}</code></pre>
+            </td>
+        </tr>
+        <tr>
+            <th>Resultado esperado</th>
+            <td>Excepción lanzada: <code>Error("Ya existe un área con ese nombre.")</code>. El método <code>areaRepository.crear</code> no debe ser ejecutado (0 invocaciones).</td>
+        </tr>
+    </table>
+
+    <div class="page-break"></div>
+
+    <!-- PRUEBA UNITARIA 3 -->
+    <h3>Prueba Unitaria 3: Capa de Repositorio (Repository / Persistencia)</h3>
+    <table>
+        <tr>
+            <th>Campo</th>
+            <td><strong>Detalle</strong></td>
+        </tr>
+        <tr>
+            <th>Nombre del Estudiante</th>
+            <td>Norman</td>
+        </tr>
+        <tr>
+            <th>Capa probada</th>
+            <td><strong>Repository</strong> (<code>AreaRepository.js</code>)</td>
+        </tr>
+        <tr>
+            <th>Elemento a validar</th>
+            <td>Método <code>obtenerPorId</code>: Valida que el repositorio invoque correctamente el método <code>findByPk</code> del modelo ORM Sequelize (<code>Area</code>) con el identificador numérico y retorne el objeto encontrado sin alteraciones.</td>
+        </tr>
+        <tr>
+            <th>Datos de entrada (Payload/Mock)</th>
+            <td>
+                <pre><code>// Parámetro
+id_area: 1
+
+// Mock Area.findByPk(1)
+{
+  "id_area": 1,
+  "nombre_area": "Lectura Crítica",
+  "descripcion": "Comprensión lectora y textos argumentativos"
+}</code></pre>
+            </td>
+        </tr>
+        <tr>
+            <th>Resultado esperado</th>
+            <td>Invocación a <code>Area.findByPk(1)</code> exactamente 1 vez y retorno del objeto coincidente:
+                <pre><code>{
+  "id_area": 1,
+  "nombre_area": "Lectura Crítica",
+  "descripcion": "Comprensión lectora y textos argumentativos"
+}</code></pre>
+            </td>
+        </tr>
+    </table>
+
+    <!-- PRUEBA UNITARIA 4 -->
+    <h3>Prueba Unitaria 4: Capa de Middleware / Seguridad (Middleware)</h3>
+    <table>
+        <tr>
+            <th>Campo</th>
+            <td><strong>Detalle</strong></td>
+        </tr>
+        <tr>
+            <th>Nombre del Estudiante</th>
+            <td>Norman</td>
+        </tr>
+        <tr>
+            <th>Capa probada</th>
+            <td><strong>Middleware</strong> (<code>auth.js</code> - <code>permitirRoles</code>)</td>
+        </tr>
+        <tr>
+            <th>Elemento a validar</th>
+            <td>Función <code>permitirRoles("admin", "gestor")</code>: Valida el control de acceso basado en roles (RBAC). Si el usuario autenticado posee un rol no autorizado (ej. <code>estudiante</code>), se debe denegar el acceso con código HTTP 403 (Forbidden) y detener el flujo sin llamar a <code>next()</code>.</td>
+        </tr>
+        <tr>
+            <th>Datos de entrada (Payload/Mock)</th>
+            <td>
+                <pre><code>// Parámetros de configuración
+permitirRoles("admin", "gestor")
+
+// Mock req.usuario
+{
+  "id_usuario": 5,
+  "rol": "estudiante"
+}</code></pre>
+            </td>
+        </tr>
+        <tr>
+            <th>Resultado esperado</th>
+            <td>Código HTTP <strong>403</strong>, JSON <code>{"mensaje": "No tienes permisos para realizar esta acción."}</code> y función <code>next()</code> no invocada.</td>
+        </tr>
+    </table>
+
+    <h2>2. Ficha Técnica de Prueba de Integración</h2>
+    <table>
+        <tr>
+            <th>Campo</th>
+            <td><strong>Detalle</strong></td>
+        </tr>
+        <tr>
+            <th>Nombre del Estudiante</th>
+            <td>Norman</td>
+        </tr>
+        <tr>
+            <th>Componentes integrados</th>
+            <td><strong>Express Router + Controller + Service + Base de Datos de Pruebas</strong></td>
+        </tr>
+        <tr>
+            <th>Elemento a validar</th>
+            <td>Flujo integral de creación y persistencia: cliente HTTP (vía <code>supertest</code>) envía petición <code>POST /api/areas</code>; el enrutador recibe la solicitud, invoca <code>AreaController.crear</code>, que interactúa con la lógica real de negocio de <code>AreaService.crear</code> y persiste el registro en el almacenamiento de pruebas. Se valida la respuesta HTTP 201 y la verificación de almacenamiento.</td>
+        </tr>
+        <tr>
+            <th>Datos de entrada (Payload)</th>
+            <td>
+                <pre><code>POST /api/areas
+Content-Type: application/json
+
+{
+  "nombre_area": "Ciencias Naturales",
+  "descripcion": "Biología y Física"
+}</code></pre>
+            </td>
+        </tr>
+        <tr>
+            <th>Resultado esperado</th>
+            <td>Código HTTP <strong>201 Created</strong>, persistencia exitosa comprobada en la base de datos de pruebas (longitud aumentada a 3) y cuerpo de respuesta:
+                <pre><code>{
+  "success": true,
+  "message": "Área creada correctamente.",
+  "data": {
+    "id_area": 3,
+    "nombre_area": "Ciencias Naturales",
+    "descripcion": "Biología y Física"
+  }
+}</code></pre>
+            </td>
+        </tr>
+    </table>
+
+    <div class="page-break"></div>
+
+    <h2>3. Automatización con Pipeline de CI (GitHub Actions)</h2>
+    <p>Se configuró el flujo de trabajo en <code>.github/workflows/ci.yml</code> para ejecutarse automáticamente ante cada <code>push</code> y <code>pull_request</code> sobre las ramas principales:</p>
+    <pre><code>name: CI Pipeline - Simulador ICFES
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm ci || npm install
+
+      - name: Ejecutar pruebas unitarias y de integración con cobertura
+        run: npm run test:coverage
+        env:
+          NODE_ENV: test
+          JWT_SECRET: test_jwt_secret_ci_environment_key_32chars</code></pre>
+
+    <h2>4. Evidencias Gráficas</h2>
+    
+    <h3>4.1. Ejecución Exitosa de Pruebas en Consola Local</h3>
+    <p>Comando ejecutado: <code>npm test</code></p>
+    <pre><code>> simulador-icfes@1.0.0 test
+> jest --runInBand
+
+PASS tests/integration/AreaIntegration.test.js
+PASS tests/unit/AreaController.test.js
+PASS tests/unit/authMiddleware.test.js
+PASS tests/unit/AreaService.test.js
+PASS tests/unit/AreaRepository.test.js
+
+Test Suites: 5 passed, 5 total
+Tests:       20 passed, 20 total
+Snapshots:   0 total
+Time:        1.77 s
+Ran all test suites.</code></pre>
+    <div class="img-placeholder">
+        [Inserta aquí la captura de pantalla de la terminal con la ejecución de <code>npm test</code>]
+    </div>
+
+    <h3>4.2. Reporte de Cobertura de Código</h3>
+    <p>Comando ejecutado: <code>npm run test:coverage</code></p>
+    <pre><code>--------------------|---------|----------|---------|---------|----------------------------------
+File                | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                
+--------------------|---------|----------|---------|---------|----------------------------------
+All files           |   48.38 |    41.26 |      50 |      50 |                                  
+ controllers        |   40.67 |    36.36 |   42.85 |   40.67 |                                  
+  AreaController.js |   40.67 |    36.36 |   42.85 |   40.67 | 7-14,18-29,62-64,104-138,146-173 
+ middlewares        |   71.42 |    53.84 |      60 |   78.94 |                                  
+  auth.js           |   71.42 |    53.84 |      60 |   78.94 | 28-31                            
+ repositories       |   43.75 |        0 |   57.14 |   46.66 |                                  
+  AreaRepository.js |   43.75 |        0 |   57.14 |   46.66 | 6,25-32,41-52                    
+ services           |      50 |    45.83 |   42.85 |   51.85 |                                  
+  AreaService.js    |      50 |    45.83 |   42.85 |   51.85 | 7-13,50-73                       
+--------------------|---------|----------|---------|---------|----------------------------------</code></pre>
+    <div class="img-placeholder">
+        [Inserta aquí la captura de pantalla de la terminal con el reporte de cobertura de Jest]
+    </div>
+
+    <h2>5. Flujo de Trabajo en Git y Pull Request</h2>
+    <ol>
+        <li><strong>Creación de rama individual:</strong> <code>git checkout -b norman-pruebas</code></li>
+        <li><strong>Confirmación de cambios:</strong> <code>git commit -m "feat(tests): agregar pruebas unitarias, integracion y pipeline CI"</code></li>
+        <li><strong>Publicación en GitHub:</strong> <code>git push origin norman-pruebas</code></li>
+        <li><strong>Apertura de Pull Request:</strong> Hacia la rama <code>main</code> en GitHub, donde el pipeline de GitHub Actions se activa y valida automáticamente la totalidad de pruebas.</li>
+        <li><strong>Revisión y Aprobación:</strong> El equipo revisa el PR y procede a la fusión (merge).</li>
+    </ol>
+</div>
+
+</body>
+</html>

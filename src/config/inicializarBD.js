@@ -15,7 +15,6 @@ async function crearBaseDeDatos() {
     await conexion.end();
 }
 
-
 // Migra nombres antiguos sin borrar datos cuando se actualiza desde la versión anterior.
 async function migrarNombresAnteriores() {
     const [tablasViejas] = await sequelize.query("SHOW TABLES LIKE 'contextos'");
@@ -78,7 +77,7 @@ async function crearObjetosSQL() {
         BEGIN
             INSERT INTO auditoria (
                 id_usuario_actor, usuario_bd, accion, tabla_afectada, id_registro,
-                datos_anteriores, datos_nuevos
+                datos_anteriores, datos_nuevos, fecha_hora
             ) VALUES (
                 @id_usuario_auditoria, CURRENT_USER(), 'INSERT', 'preguntas', NEW.id_pregunta,
                 NULL,
@@ -92,7 +91,8 @@ async function crearObjetosSQL() {
                     'opcion_d', NEW.opcion_d,
                     'respuesta_correcta', NEW.respuesta_correcta,
                     'nivel_dificultad', NEW.nivel_dificultad
-                )
+                ),
+                NOW()
             );
         END
     `);
@@ -104,7 +104,7 @@ async function crearObjetosSQL() {
         BEGIN
             INSERT INTO auditoria (
                 id_usuario_actor, usuario_bd, accion, tabla_afectada, id_registro,
-                datos_anteriores, datos_nuevos
+                datos_anteriores, datos_nuevos, fecha_hora
             ) VALUES (
                 @id_usuario_auditoria, CURRENT_USER(), 'UPDATE', 'preguntas', NEW.id_pregunta,
                 JSON_OBJECT(
@@ -128,7 +128,8 @@ async function crearObjetosSQL() {
                     'opcion_d', NEW.opcion_d,
                     'respuesta_correcta', NEW.respuesta_correcta,
                     'nivel_dificultad', NEW.nivel_dificultad
-                )
+                ),
+                NOW()
             );
         END
     `);
@@ -140,7 +141,7 @@ async function crearObjetosSQL() {
         BEGIN
             INSERT INTO auditoria (
                 id_usuario_actor, usuario_bd, accion, tabla_afectada, id_registro,
-                datos_anteriores, datos_nuevos
+                datos_anteriores, datos_nuevos, fecha_hora
             ) VALUES (
                 @id_usuario_auditoria, CURRENT_USER(), 'DELETE', 'preguntas', OLD.id_pregunta,
                 JSON_OBJECT(
@@ -154,7 +155,8 @@ async function crearObjetosSQL() {
                     'respuesta_correcta', OLD.respuesta_correcta,
                     'nivel_dificultad', OLD.nivel_dificultad
                 ),
-                NULL
+                NULL,
+                NOW()
             );
         END
     `);

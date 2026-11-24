@@ -4,8 +4,15 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --runInBand --silent",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration --runInBand",
     "start": "node server.js"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFiles": ["<rootDir>/tests/setup-env.js"],
+    "testTimeout": 30000
   },
   "keywords": [],
   "author": "",
@@ -21,5 +28,9 @@
     "multer": "^2.2.0",
     "mysql2": "^3.24.2",
     "sequelize": "^6.37.8"
+  },
+  "devDependencies": {
+    "jest": "^30.5.2",
+    "supertest": "^7.3.2"
   }
 }
